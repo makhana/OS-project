@@ -1,5 +1,5 @@
 //
-// Created by marko on 20.4.22..
+// Created by os on 20.8.23.
 //
 
 #ifndef OS1_VEZBE07_RISCV_CONTEXT_SWITCH_2_INTERRUPT_TCB_HPP
@@ -7,7 +7,6 @@
 
 #include "../lib/hw.h"
 #include "scheduler.hpp"
-//#include "../h/MemoryAllocator.hpp"
 
 #include "../lib/mem.h"
 
@@ -29,8 +28,6 @@ public:
 
     static TCB *createThread(Body body, void* args, bool isSys);
 
-    static void yield();
-
     static TCB *running;
 
 
@@ -47,8 +44,6 @@ public:
     static void operator delete(void*p);
     static void* operator new[](size_t);
     static void operator delete[](void*p);
-
-
 
 
 private:
@@ -98,7 +93,6 @@ private:
     uint64* userStackSP;
 
     static uint64 systemSPOffset;
-    //static uint64 userSPOffset;
 
 
     static TCB* sleepyHead;
@@ -123,4 +117,4 @@ private:
 
 };
 
-#endif //OS1_VEZBE07_RISCV_CONTEXT_SWITCH_2_INTERRUPT_TCB_HPP
+#endif
