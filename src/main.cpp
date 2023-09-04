@@ -19,31 +19,13 @@ void wrapperUserMain(void *){
     userMain();
 }
 
-//void testFunction(void*){
-//
-//    while(1){
-//        thread_dispatch();
-//    }
-//
-//}
-
-//class ExampleThread: public PeriodicThread {
-//
-//public:
-//    ExampleThread():PeriodicThread(20) {}
-//
-//    void periodicActivation() override {
-//        putc('a');
-//    }
-//};
-
 
 int main()
 {
     MemoryAllocator::initialize();
     KConsole::initialize();
 
-    Riscv::w_stvec((uint64) &Riscv::vectorTable | 1);
+    Riscv::w_stvec((uint64) &Riscv::vectorTable | 1); // set interrupt vector routine
 
 
     thread_t threads[2];
@@ -53,17 +35,7 @@ int main()
     threads[1] = TCB::createThread(wrapperUserMain, nullptr, false);
 
 
-    Riscv::ms_sstatus(Riscv::SSTATUS_SIE); // dozvoljeni softverski prekidi
-
-
-//   ExampleThread* thr = new ExampleThread();
-//
-//   thr->start();
-//
-//    time_sleep(100);
-//
-//    thr->terminate();
-//
+    Riscv::ms_sstatus(Riscv::SSTATUS_SIE); // enable software interrupts
 
     while(!threads[1]->isFinished()){
         thread_dispatch();
