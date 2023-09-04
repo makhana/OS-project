@@ -1,5 +1,5 @@
 //
-// Created by marko on 20.4.22..
+// Created by os on 7/27/23.
 //
 
 #ifndef OS1_VEZBE07_RISCV_CONTEXT_SWITCH_2_INTERRUPT_RISCV_HPP
@@ -21,7 +21,6 @@ enum {
     TIME_SLEEP = 0x31,
     GETC = 0x41,
     PUTC = 0x42,
-    THREAD_START = 0x15,
 };
 
 class Riscv
@@ -94,9 +93,9 @@ public:
     static void w_sstatus(uint64 sstatus);
 
     // supervisor trap
-    static void supervisorTrap();
-    static void externalTrap(); // spoljasnji hardverski prekid
-    static void softwareTrap(); // softverski prekid iz treceg, naprivilegov anijeg rezima rada procesora
+    static void supervisorTrap(); // ecall interrupts
+    static void externalTrap(); // hardare interrupts
+    static void softwareTrap(); // software timer interrupts
 
     static void vectorTable();
 
@@ -202,4 +201,4 @@ inline void Riscv::w_sstatus(uint64 sstatus)
     __asm__ volatile ("csrw sstatus, %[sstatus]" : : [sstatus] "r"(sstatus));
 }
 
-#endif //OS1_VEZBE07_RISCV_CONTEXT_SWITCH_2_INTERRUPT_RISCV_HPP
+#endif
