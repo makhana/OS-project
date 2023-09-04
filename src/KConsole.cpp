@@ -30,12 +30,12 @@ void KConsole::kconsole_handler() {
         if(* (char * )CONSOLE_STATUS & CONSOLE_RX_STATUS_BIT){
             // getc ready
             KSemaphore::ksem_signal(semGetReady);
-            // hoce da procita podatak iz registra konzole
+            // read data from console register
         }
         if (* (char * )CONSOLE_STATUS & CONSOLE_TX_STATUS_BIT){
             // putc ready
             KSemaphore::ksem_signal(semPutReady);
-            // moze primiti podatak za slanje na konzolu (upis u registar)
+            // get data for sending to console (write to console register)
 
         }
         plic_complete(CONSOLE_IRQ);
@@ -53,7 +53,7 @@ char KConsole::kgetc() {
 
 
 void KConsole::consumerFunction(void *) {
-    // does GET
+    // thread that does GET operation
     while(1){
         KSemaphore::ksem_wait(semGetReady);
         while(* (char * )CONSOLE_STATUS & CONSOLE_RX_STATUS_BIT){
@@ -63,17 +63,16 @@ void KConsole::consumerFunction(void *) {
             }
         }
     }
-
 }
 
 
 
 void KConsole::producerFunction(void *) {
+    // thread that does PUT operation
     while(1){
         KSemaphore::ksem_wait(semPutReady);
         while(* (char * )CONSOLE_STATUS & CONSOLE_TX_STATUS_BIT){
             * (char * )CONSOLE_TX_DATA = (uint64)initial->bufferPUT->bufferGet();
         }
     }
-
 }
