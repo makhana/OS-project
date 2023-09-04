@@ -64,7 +64,10 @@ private:
         finished = false;
         isSystem = isSys;
         systemStack = (uint64*)MemoryAllocator::kmem_alloc(DEFAULT_STACK_SIZE * sizeof(uint64));
-        systemStackSP = (uint64)&systemStack[DEFAULT_STACK_SIZE];
+        systemStackSP = &systemStack[DEFAULT_STACK_SIZE];
+
+        userStackSP = (b != nullptr) ? &stack[DEFAULT_STACK_SIZE] : nullptr;
+
         if (body != nullptr) { Scheduler::put(this); }
     }
 
@@ -90,7 +93,13 @@ private:
     bool isSystem;
 
     uint64* systemStack;
-    uint64 systemStackSP;
+    uint64* systemStackSP;
+
+    uint64* userStackSP;
+
+    static uint64 systemSPOffset;
+    //static uint64 userSPOffset;
+
 
     static TCB* sleepyHead;
     TCB* sleepyNext;

@@ -64,7 +64,7 @@ protected:
     virtual void periodicActivation (){}
 
     void run() override {
-        while(finished){
+        while(!finished){
             periodicActivation();
             sleep(period);
         }

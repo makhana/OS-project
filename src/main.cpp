@@ -12,12 +12,30 @@
 
 #include "../lib/console.h"
 
+#include "../h/syscall_cpp.hpp"
+
 void userMain();
 void wrapperUserMain(void *){
     userMain();
 }
 
+//void testFunction(void*){
+//
+//    while(1){
+//        thread_dispatch();
+//    }
+//
+//}
 
+//class ExampleThread: public PeriodicThread {
+//
+//public:
+//    ExampleThread():PeriodicThread(20) {}
+//
+//    void periodicActivation() override {
+//        putc('a');
+//    }
+//};
 
 
 int main()
@@ -28,26 +46,31 @@ int main()
     Riscv::w_stvec((uint64) &Riscv::vectorTable | 1);
 
 
-    thread_t threads[4];
+    thread_t threads[2];
     threads[0] = TCB::createThread(nullptr, nullptr, true);
     TCB::running = threads[0];
 
     threads[1] = TCB::createThread(wrapperUserMain, nullptr, false);
 
-//    threads[2] = TCB::createThread(KConsole::consumerFunction, nullptr, true);
-//    threads[3] = TCB::createThread(KConsole::producerFunction, nullptr, true);
 
     Riscv::ms_sstatus(Riscv::SSTATUS_SIE); // dozvoljeni softverski prekidi
 
 
+//   ExampleThread* thr = new ExampleThread();
+//
+//   thr->start();
+//
+//    time_sleep(100);
+//
+//    thr->terminate();
+//
 
     while(!threads[1]->isFinished()){
         thread_dispatch();
     }
 
     delete threads[1];
-//    delete threads[2];
-//    delete threads[3];
+
 
     return 0;
 }

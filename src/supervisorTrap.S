@@ -5,6 +5,22 @@
 .type _ZN5Riscv14supervisorTrapEv, @function
 _ZN5Riscv14supervisorTrapEv:
 
+    // switch to SYSTEM stack
+    sd t0, -1 * 8(sp)
+    csrw sscratch, a0
+
+    ld a0, _ZN3TCB7runningE
+    ld t0, _ZN3TCB14systemSPOffsetE
+    add a0, a0, t0
+
+    mv t0, sp
+
+    ld sp, 0(a0)
+    sd t0, 0(a0)
+
+    csrr a0, sscratch
+    ld t0, -1 * 8(t0)
+
 
     # push all registers to stack
     addi sp, sp, -256
@@ -19,6 +35,22 @@ _ZN5Riscv14supervisorTrapEv:
     ld x\index, \index * 8(sp)
     .endr
     addi sp, sp, 256
+
+    // return to USER stack
+    sd t0, -1 * 8(sp)
+    csrw sscratch, a0
+
+    ld a0, _ZN3TCB7runningE
+    ld t0, _ZN3TCB14systemSPOffsetE
+    add a0, a0, t0
+
+    mv t0, sp
+
+    ld sp, 0(a0)
+    sd t0, 0(a0)
+
+    csrr a0, sscratch
+    ld t0, -1 * 8(t0)
 
 
     sret
