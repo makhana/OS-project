@@ -29,7 +29,6 @@ void Riscv::handleSupervisorTrap(int code, void* args)
 {
     uint64 scause = r_scause();
 
-
     size_t *argsF = (size_t*) args;
 
     void* ret = nullptr;
@@ -116,8 +115,6 @@ void Riscv::handleSupervisorTrap(int code, void* args)
             case GETC: {
                 TCB::running->sepc = Riscv::r_sepc() + 4;
                 TCB::running->sstatus = Riscv::r_sstatus();
-                //Riscv::w_sepc(r_sepc() + 4);
-                //ret = (void*) (size_t)__getc();
                 ret = (void* ) ((size_t)KConsole::kgetc());
                 __asm__ volatile("mv a0, %0" : : "r" (ret));
                 Riscv::w_sstatus(TCB::running->sstatus);
@@ -127,8 +124,6 @@ void Riscv::handleSupervisorTrap(int code, void* args)
             case PUTC: {
                 TCB::running->sepc = Riscv::r_sepc() + 4;
                 TCB::running->sstatus = Riscv::r_sstatus();
-                //Riscv::w_sepc(r_sepc() + 4);
-                //__putc((char)argsF[0]);
                 KConsole::kputc((char)argsF[0]);
                 Riscv::w_sstatus(TCB::running->sstatus);
                 Riscv::w_sepc(TCB::running->sepc);
@@ -151,54 +146,48 @@ void Riscv::handleSupervisorTrap(int code, void* args)
     }
 
     else {
-        // unexpected trap cause
-//        printString("Unexpected trap cause: ");
-//        printInt(scause);
-//        printString("\n");
         while(true){
-
+            // if illegal action happens end up here
         }
     }
-    //mc_sip(SIP_SSIP);
-
 }
 
 void Riscv::handleExternalTrap() {
-    //console_handler();
     KConsole::kconsole_handler();
 }
 
 void Riscv::handleSoftwareTrap() {
-     //interrupt: yes; cause code: supervisor software interrupt (CLINT; machine timer interrupt)
+    //interrupt: yes; cause code: supervisor software interrupt (CLINT; machine timer interrupt)
 
-     TCB* t = TCB::sleepyHead;
-     for(; t!= nullptr; t = t->sleepyNext){
-         t->sleepyTime -= 1;
-         if(t->sleepyTime == 0){
-             if(t->sleepyPrev){
-                 t->sleepyPrev->sleepyNext = t->sleepyNext;
-                 if(t->sleepyNext)  t->sleepyNext->sleepyPrev = t->sleepyPrev;
-             } else {
-                 TCB::sleepyHead = t->sleepyNext;
-                 if(TCB::sleepyHead != nullptr)  TCB::sleepyHead->sleepyPrev = nullptr;
-             }
+    // sleepy threads
+    TCB* t = TCB::sleepyHead;
+    for(; t!= nullptr; t = t->sleepyNext){
+        t->sleepyTime -= 1;
+        if(t->sleepyTime == 0){
+            if(t->sleepyPrev){
+                t->sleepyPrev->sleepyNext = t->sleepyNext;
+                if(t->sleepyNext)  t->sleepyNext->sleepyPrev = t->sleepyPrev;
+            } else {
+                TCB::sleepyHead = t->sleepyNext;
+                if(TCB::sleepyHead != nullptr)  TCB::sleepyHead->sleepyPrev = nullptr;
+            }
 
-             t->sleepyNext = nullptr;
-             t->sleepyPrev = nullptr;
-             Scheduler::put(t);
-         }
-     }
+            t->sleepyNext = nullptr;
+            t->sleepyPrev = nullptr;
+            Scheduler::put(t);
+        }
+    }
 
-     TCB::timeSliceCounter++;
-     if (TCB::timeSliceCounter >= TCB::running->getTimeSlice())
-     {
-         TCB::running->sepc = Riscv::r_sepc();
-         TCB::running->sstatus = Riscv::r_sstatus();
-         TCB::timeSliceCounter = 0;
-         TCB::dispatch();
-         Riscv::w_sstatus(TCB::running->sstatus);
-         Riscv::w_sepc(TCB::running->sepc);
-     }
-     mc_sip(SIP_SSIP);
+    TCB::timeSliceCounter++;
+    if (TCB::timeSliceCounter >= TCB::running->getTimeSlice())
+    {
+        TCB::running->sepc = Riscv::r_sepc();
+        TCB::running->sstatus = Riscv::r_sstatus();
+        TCB::timeSliceCounter = 0;
+        TCB::dispatch();
+        Riscv::w_sstatus(TCB::running->sstatus);
+        Riscv::w_sepc(TCB::running->sepc);
+    }
+    mc_sip(SIP_SSIP); // software interrupt processed
 }
 
