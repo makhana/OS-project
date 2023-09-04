@@ -11,9 +11,9 @@ class KConsole {
 public:
     // status 0 -> putc
     // status 5 -> getc
-    // CONSOLE_STATUS -> statusni registar
-    // CONSOLE_TX_DATA -> za prijem podataka (getc)
-    // CONSOLE_RX_DATA -> za slanje podataka (putc)
+    // CONSOLE_STATUS -> status register
+    // CONSOLE_TX_DATA -> for receiving data (getc)
+    // CONSOLE_RX_DATA -> for sending data (putc)
 
     static void initialize();
 
