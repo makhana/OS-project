@@ -9,8 +9,8 @@
 
 class KConsole {
 public:
-    // status 0 -> putc
-    // status 5 -> getc
+    // CONSOLE_TX_STATUS_BIT -> putc
+    // CONSOLE_RX_STATUS_BIT -> getc
     // CONSOLE_STATUS -> status register
     // CONSOLE_TX_DATA -> for sending data (putc)
     // CONSOLE_RX_DATA -> for receiving data (getc)
