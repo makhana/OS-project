@@ -15,7 +15,6 @@ void operator delete(void *p) {
 }
 
 Thread::Thread(void (*body)(void *), void *arg) {
-    //thread_create(&myHandle, body, arg);
     this->body = body;
     this->arg = arg;
 }
@@ -38,14 +37,9 @@ int Thread::sleep(time_t time) {
     return time_sleep(time);
 }
 
-//Thread::~Thread() {
-//    delete myHandle;
-//}
-
 int Thread::start() {
     if(body){
         thread_create(&myHandle, body, arg);
-        //run();
     } else {
         thread_create(&myHandle, &thread_wrapper, this);
     }
