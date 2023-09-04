@@ -27,9 +27,6 @@ public:
         return val;
     }
 
-//    KSemaphore(const KSemaphore&) = delete;
-//    KSemaphore& operator= (const KSemaphore&) = delete;
-
 
 protected:
     void block();
