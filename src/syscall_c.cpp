@@ -26,7 +26,6 @@ int mem_free (void* address){
 }
 
 int thread_create (thread_t* handle, void(*start_routine)(void*), void* arg){
-
     size_t args[] = {(size_t)handle, (size_t)start_routine, (size_t)arg};
     void* retval = callSystem(THREAD_CREATE, args);
     return retval ? -1 : 0;
@@ -46,29 +45,29 @@ void thread_join (thread_t handle){
     callSystem(THREAD_JOIN, args);
 }
 
-
 int sem_open (sem_t* handle, unsigned int val){
     size_t args[] = {(size_t)handle, (size_t)val};
     void* retval = callSystem(SEM_OPEN, args);
     return retval ? -1 : 0;
 }
+
 int sem_close (sem_t handle){
     size_t args[] = {(size_t)handle};
     void* retval = callSystem(SEM_CLOSE, args);
     return retval ? -1 : 0;
 }
+
 int sem_wait (sem_t id){
     size_t args[] = {(size_t)id};
     void* retval = callSystem(SEM_WAIT, args);
     return retval ? -1 : 0;
 }
+
 int sem_signal (sem_t id){
     size_t args[] = {(size_t)id};
     void* retval = callSystem(SEM_SIGNAL, args);
     return retval ? -1 : 0;
 }
-
-
 
 int time_sleep (time_t time){
     size_t args[] = {(size_t)time};
@@ -76,15 +75,12 @@ int time_sleep (time_t time){
     return retval ? -1 : 0;
 }
 
-
 char getc(){
-
-    //return __getc();
     void* retval = callSystem(GETC, nullptr);
     return (char)((uint64)retval);
 }
+
 void putc(char c){
-    //__putc(c);
     size_t args[] = {(size_t)c};
     callSystem(PUTC, args);
 }
