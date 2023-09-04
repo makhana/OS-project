@@ -12,8 +12,8 @@ public:
     // status 0 -> putc
     // status 5 -> getc
     // CONSOLE_STATUS -> status register
-    // CONSOLE_TX_DATA -> for receiving data (getc)
-    // CONSOLE_RX_DATA -> for sending data (putc)
+    // CONSOLE_TX_DATA -> for sending data (putc)
+    // CONSOLE_RX_DATA -> for receiving data (getc)
 
     static void initialize();
 
